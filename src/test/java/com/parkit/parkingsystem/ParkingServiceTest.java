@@ -48,11 +48,11 @@ public class ParkingServiceTest {
     private void setUpPerTest() {
         try {
             // when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
-            ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
+           /* ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
             Ticket ticket = new Ticket();
             ticket.setInTime(new Date(System.currentTimeMillis() - (60*60*1000)));
             ticket.setParkingSpot(parkingSpot);
-            ticket.setVehicleRegNumber("ABCDEF");
+            ticket.setVehicleRegNumber("ABCDEF");*/
             // when(ticketDAO.getTicket(anyString())).thenReturn(ticket);
             // when(ticketDAO.getNbTicket(anyString())).thenReturn(1);
             // when(inputReaderUtil.readSelection()).thenReturn(1);
@@ -63,7 +63,7 @@ public class ParkingServiceTest {
         }
     }
 
-    // erreur Wanted but not invoked: ticketDAO.saveTicket(<any com.parkit.parkingsystem.model.Ticket>);
+    // test réussi
     @Test
     public void processIncomingVehicleTest() {
         try {
@@ -71,61 +71,68 @@ public class ParkingServiceTest {
             when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(1);
             when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
             when(ticketDAO.getNbTicket(anyString())).thenReturn(1);
+            parkingService.processIncomingVehicle();
             verify(parkingSpotDAO, Mockito.times(1)).updateParking(any());
             verify(ticketDAO, Mockito.times(1)).saveTicket(any(Ticket.class));
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        parkingService.processIncomingVehicle();
 
     }
 
-    // erreur "Wanted but not invoked: parkingSpotDAO.updateParking(<any com.parkit.parkingsystem.model.ParkingSpot>);
+    // ERREUR
     @Test
     public void processExitingVehicleTest() {
         try {
-            when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
-            when(ticketDAO.getNbTicket(anyString())).thenReturn(2);
+            ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
+            Ticket ticket = new Ticket();
+            ticket.setInTime(new Date(System.currentTimeMillis() - (60*60*1000)));
+            ticket.setParkingSpot(parkingSpot);
+            ticket.setVehicleRegNumber("ABCDEF");
+            // when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+            // when(ticketDAO.getNbTicket(anyString())).thenReturn(2);
             when(ticketDAO.getTicket(anyString())).thenReturn(ticket);
             when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(true);
-            when(ticket.getParkingSpot()).thenReturn(parkingSpot);
+            // when(ticket.getParkingSpot()).thenReturn(parkingSpot);
+            parkingService.processExitingVehicle();
             verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        parkingService.processExitingVehicle();
+
     }
 
+    // ERREUR
     @Test
     public void processExitingVehicleTestUnableUpdate() {
         try {
             when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
             when(ticketDAO.getNbTicket(anyString())).thenReturn(2);
-            when(ticketDAO.getTicket(anyString())).thenReturn(ticket);
+            // when(ticketDAO.getTicket(anyString())).thenReturn(ticket);
             when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(false);
+            parkingService.processExitingVehicle();
             verify(parkingSpotDAO, Mockito.times(0)).updateParking(any(ParkingSpot.class));
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        parkingService.processExitingVehicle();
     }
 
-    // erreur "expected 0, actual 1"
+    // test réussi
     @Test
     public void getNextParkingNumberIfAvailableTest() {
         try {
             when(inputReaderUtil.readSelection()).thenReturn(1);
             when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(1);
+            ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable();
             assertEquals(parkingSpot.getId(), 1);
             assertTrue(parkingSpot.isAvailable());
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        parkingService.getNextParkingNumberIfAvailable();
     }
 
     // test réussi
