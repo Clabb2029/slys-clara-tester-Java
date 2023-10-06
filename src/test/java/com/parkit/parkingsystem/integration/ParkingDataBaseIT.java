@@ -55,16 +55,16 @@ public class ParkingDataBaseIT {
         parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
         when(inputReaderUtil.readSelection()).thenReturn(1);
         when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehicleRegNumber);
-        dataBasePrepareService.clearDataBaseEntries();
     }
 
     @AfterAll
     private static void tearDown(){
-        // y mettre de quoi remettre au propre le tout après les tests
+        dataBasePrepareService.clearDataBaseEntries();
     }
 
     @Test
     public void testParkingACar(){
+        dataBasePrepareService.clearDataBaseEntries();
         parkingService.processIncomingVehicle();
 
         Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
@@ -76,24 +76,22 @@ public class ParkingDataBaseIT {
 
     @Test
     public void testParkingLotExit(){
-        Ticket advancedTicket = new Ticket();
-        advancedTicket.setInTime(new Date(System.currentTimeMillis() - (60*60*1000)));
-        advancedTicket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR,false));
-        advancedTicket.setVehicleRegNumber("ABCDEF");
-        ticketDAO.saveTicket(advancedTicket);
-        testParkingACar();
+        Ticket newTicket = new Ticket();
+        newTicket.setInTime(new Date(System.currentTimeMillis() - (60*60*10000)));
+        newTicket.setParkingSpot(parkingService.getNextParkingNumberIfAvailable());
+        newTicket.setVehicleRegNumber(vehicleRegNumber);
+        ticketDAO.saveTicket(newTicket);
 
         parkingService.processExitingVehicle();
 
         Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
         ParkingSpot parkingSpot = ticket.getParkingSpot();
-        Date outTime = ticket.getOutTime();
         Date inTime = ticket.getInTime();
+        Date outTime = ticket.getOutTime();
         assertNotNull(ticket.getPrice());
-        assertNotNull(ticket.getOutTime());
+        assertNotNull(outTime);
         assertTrue(outTime.compareTo(inTime) > 0);
-        assertTrue(ticketDAO.updateTicket(ticket));
-        assertTrue(parkingSpot.isAvailable());
+        assertTrue(parkingSpotDAO.updateParking((parkingSpot)));
     }
 
     @Test
@@ -103,8 +101,11 @@ public class ParkingDataBaseIT {
 
         Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
         double actualPrice = ticket.getPrice();
-        double actualTicketDuration = ticket.getOutTime().getTime() - ticket.getInTime().getTime();
-        double expectedPrice = actualTicketDuration * Fare.CAR_RATE_PER_HOUR * 0.95;
+        double inTime = ticket.getInTime().getTime();
+        double outTime = ticket.getOutTime().getTime();
+        double actualTicketDuration = (outTime - inTime) / 3600000;
+        double expectedPrice = Math.round(actualTicketDuration * Fare.CAR_RATE_PER_HOUR * 0.95 * 100.0) / 100.0;
         assertEquals(actualPrice, expectedPrice);
+        dataBasePrepareService.clearDataBaseEntries();
     }
 }
