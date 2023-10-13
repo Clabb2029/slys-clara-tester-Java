@@ -19,6 +19,12 @@ public class TicketDAO {
 
     public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
+    /**
+     * Use database to save the user ticket, indicating his parking spot, his vehicle registration number
+     * and his entry time
+     *
+     * @param ticket The ticket that is created when a user enter his information
+     */
     public boolean saveTicket(Ticket ticket){
         Connection con = null;
         try {
@@ -40,6 +46,11 @@ public class TicketDAO {
         }
     }
 
+    /**
+     * Use database to get the information of an already created ticket
+     *
+     * @param vehicleRegNumber The vehicle registration number of the user
+     */
     public Ticket getTicket(String vehicleRegNumber) {
         Connection con = null;
         Ticket ticket = null;
@@ -69,6 +80,11 @@ public class TicketDAO {
         }
     }
 
+    /**
+     * Use database to update the ticket information, when the user is leaving the parking lot
+     *
+     * @param ticket The ticket that has already been created
+     */
     public boolean updateTicket(Ticket ticket) {
         Connection con = null;
         try {
@@ -86,7 +102,12 @@ public class TicketDAO {
         }
         return false;
     }
-    
+
+    /**
+     * Use database to get the number of tickets of a given user
+     *
+     * @param vehicleRegNumber The vehicle registration number of the user
+     */
     public int getNbTicket(String vehicleRegNumber) {
         Connection con = null;
         int nbTickets = 0;

@@ -1,7 +1,5 @@
 package com.parkit.parkingsystem.integration;
-
 import com.parkit.parkingsystem.constants.Fare;
-import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.integration.config.DataBaseTestConfig;
@@ -17,10 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import static junit.framework.Assert.*;
 import static org.mockito.Mockito.when;
 
@@ -88,7 +83,7 @@ public class ParkingDataBaseIT {
         ParkingSpot parkingSpot = ticket.getParkingSpot();
         Date inTime = ticket.getInTime();
         Date outTime = ticket.getOutTime();
-        assertNotNull(ticket.getPrice());
+        assertTrue(ticket.getPrice() > 0);
         assertNotNull(outTime);
         assertTrue(outTime.compareTo(inTime) > 0);
         assertTrue(parkingSpotDAO.updateParking((parkingSpot)));

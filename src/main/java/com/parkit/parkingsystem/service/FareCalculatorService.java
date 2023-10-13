@@ -5,6 +5,13 @@ import com.parkit.parkingsystem.model.Ticket;
 
 public class FareCalculatorService {
 
+	/**
+	 * Calculate the fare depending on the parking type, the amount of time,
+	 * and if there is a discount or not
+	 *
+	 * @param ticket the user ticket, created when he entered the parking lot
+	 * @param discount boolean indicating if the user gets or not a discount
+	 */
     public void calculateFare(Ticket ticket, boolean discount){
         if( (ticket.getOutTime() == null) || (ticket.getOutTime().before(ticket.getInTime())) ){
             throw new IllegalArgumentException("Out time provided is incorrect:"+ticket.getOutTime().toString());
@@ -45,7 +52,12 @@ public class FareCalculatorService {
         	}
         }
     }
-    
+
+	/**
+	 * Method called if there is no discount applied
+	 *
+	 * @param ticket the user ticket, created when he entered the parking lot
+	 */
     public void calculateFare(Ticket ticket) {
     	calculateFare(ticket, false);
     }

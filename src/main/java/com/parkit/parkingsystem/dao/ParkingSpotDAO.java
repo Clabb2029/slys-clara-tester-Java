@@ -16,6 +16,11 @@ public class ParkingSpotDAO {
 
     public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
+    /**
+     * Use database to get the next available slot depending on given parking type
+     *
+     * @param parkingType The parking type between 'car' and 'bike'
+     */
     public int getNextAvailableSlot(ParkingType parkingType){
         Connection con = null;
         int result=-1;
@@ -37,6 +42,11 @@ public class ParkingSpotDAO {
         return result;
     }
 
+    /**
+     * Use database to set available or not a parking spot
+     *
+     * @param parkingSpot The parking spot that will be updated (available or not)
+     */
     public boolean updateParking(ParkingSpot parkingSpot){
         //update the availability fo that parking slot
         Connection con = null;
